@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { TUser } from './interfaces/TUser';
 import { TGroup } from './interfaces/TGroup';
 import { TElement } from './interfaces/TElement';
-import { initializeStore } from './context/AppDataContext';
-import CurrentUserSelector from './components/CurrentUserSelector';
+import CurrentUserSelector from './components/Users/CurrentUserSelector';
+import { useUserStore } from './components/Users/UserStore';
+import { useElementStore } from './components/Elements/ElementStore';
+import ElementList from './components/Elements/ElementList';
+import { useGroupStore } from './components/Groups/GroupStore';
+import ElementCreator from './components/Elements/ElementCreator';
+import GroupCreator from './components/Groups/GroupCreator';
+import GroupList from './components/Groups/GroupList';
 
 function App() {
   const users: TUser[] = [
@@ -31,18 +37,39 @@ function App() {
   groups[0].parent_group = groups[1];
   users[0].user_groups = [groups[1]];
 
-  initializeStore({
-    groups: groups,
-    users: users,
-    current_user: users[0]
-  });
+  // initializeStore({
+  //   groups: groups,
+  //   users: users,
+  //   current_user: users[0]
+  // });
+
+  const fetchUser = useUserStore(state => state.fetchUsers);
+  const fetchElements = useElementStore(state => state.fetchElements);
+  const fetchGroups = useGroupStore(state => state.fetchGroups);
+  useEffect(() => {
+    fetchUser(users);
+    fetchElements(items);
+    fetchGroups(groups);
+  }, [])
+
+  const current_user = useUserStore(state => state.currentUser);
 
   return (
     <div className="p-4 space-y-4">
-            <h1 className="text-xl font-bold">Управление правами</h1>
-            <CurrentUserSelector />
-            <h2 className="text-xl font-bold">Список элементов</h2>
-        </div>
+      <h1 className="text-xl font-bold">Управление правами</h1>
+      <CurrentUserSelector />
+      <h2 className="text-xl font-bold">Список элементов</h2>
+      <ElementCreator />
+      <ElementList />
+      {
+        current_user?.is_admin && <>
+          <h2 className="text-xl font-bold">Список групп</h2>
+          <GroupCreator />
+          <GroupList />
+        </>
+      }
+
+    </div>
   );
 }
 

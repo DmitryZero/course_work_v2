@@ -1,23 +1,27 @@
-'use client'
-import { Autocomplete, Checkbox, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField } from "@mui/material";
 import { useState } from "react";
+import { TUser } from "../../interfaces/TUser";
+import { useUserStore } from "./UserStore";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { useCurrentUser, useUserActions, useUsers } from "../context/AppDataContext";
-import { TUser } from "../interfaces/TUser";
+import { Autocomplete, Checkbox, TextField } from "@mui/material";
 
-export default function CurrentUserSelector() {
-    const users = useUsers();
-    const current_user = useCurrentUser();
-    const { updateCurrentUser } = useUserActions();
+type TProps = {
+    default_users?: TUser[] | undefined
+    // updateElementList: Act<TElement[]>
+}
+
+export default function UserSelector({ default_users }: TProps) {
+    const users = useUserStore(state => state.users);
+    const [selected_users, setSelectedUsers] = useState<TUser[]>(default_users || []);
 
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     return (
         <Autocomplete
+            multiple
             options={users}
-            value={current_user}
+            value={selected_users}
             disableCloseOnSelect
             getOptionLabel={(option) => option.name}
             renderOption={(props, option, { selected }) => {
@@ -36,10 +40,10 @@ export default function CurrentUserSelector() {
             }}
             style={{ width: 500 }}
             renderInput={(params) => (
-                <TextField {...params} label={"Текущий пользователь"} />
+                <TextField sx={{ mt: 2 }} {...params} label="Пользователи" />
             )}
-            onChange={(event: any, newValue: TUser | null) => {
-                updateCurrentUser(newValue);
+            onChange={(event: any, newValue: TUser[] | null) => {
+                setSelectedUsers(newValue || []);
             }}
             sx={{ mt: 2 }}
         />

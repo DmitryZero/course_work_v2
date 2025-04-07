@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { TUser } from './interfaces/TUser';
 import { TGroup } from './interfaces/TGroup';
@@ -36,12 +35,6 @@ function App() {
 
   groups[0].parent_group = groups[1];
   users[0].user_groups = [groups[1]];
-
-  // initializeStore({
-  //   groups: groups,
-  //   users: users,
-  //   current_user: users[0]
-  // });
 
   const fetchUser = useUserStore(state => state.fetchUsers);
   const fetchElements = useElementStore(state => state.fetchElements);

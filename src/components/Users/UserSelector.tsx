@@ -7,10 +7,12 @@ import { Autocomplete, Checkbox, TextField } from "@mui/material";
 
 type TProps = {
     default_users?: TUser[] | undefined
+    onUsersChange?: (users: TUser[] | null) => void,
+    clearValue?: () => void
     // updateElementList: Act<TElement[]>
 }
 
-export default function UserSelector({ default_users }: TProps) {
+export default function UserSelector({ default_users, onUsersChange }: TProps) {
     const users = useUserStore(state => state.users);
     const [selected_users, setSelectedUsers] = useState<TUser[]>(default_users || []);
 
@@ -44,6 +46,7 @@ export default function UserSelector({ default_users }: TProps) {
             )}
             onChange={(event: any, newValue: TUser[] | null) => {
                 setSelectedUsers(newValue || []);
+                if (onUsersChange) onUsersChange(newValue);
             }}
             sx={{ mt: 2 }}
         />

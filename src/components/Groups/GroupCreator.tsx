@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useUserStore } from "../Users/UserStore";
 import { TGroup } from "../../interfaces/TGroup";
 import { Button, FormGroup, Paper, TextField } from "@mui/material";
 import GroupSelector from "./GroupSelector";
@@ -32,7 +31,7 @@ export default function GroupCreator() {
     }
 
     const handleUsersChange = (users: TUser[] | null) => {
-        setGroup({ ...group, users: users || []});
+        setGroup({ ...group, users: users || [] });
     }
 
     return (

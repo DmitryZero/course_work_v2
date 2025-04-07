@@ -6,24 +6,21 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Autocomplete, Checkbox, TextField } from "@mui/material";
 
 type TProps = {
-    default_users?: TUser[] | undefined
-    onUsersChange?: (users: TUser[] | null) => void,
-    clearValue?: () => void
+    value: TUser[] | undefined
+    updateValue?: (users: TUser[] | undefined) => void,
+    variants: TUser[]
     // updateElementList: Act<TElement[]>
 }
 
-export default function UserSelector({ default_users, onUsersChange }: TProps) {
-    const users = useUserStore(state => state.users);
-    const [selected_users, setSelectedUsers] = useState<TUser[]>(default_users || []);
-
+export default function UserSelector({ value, updateValue, variants }: TProps) {
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     return (
         <Autocomplete
             multiple
-            options={users}
-            value={selected_users}
+            options={variants}
+            value={value}
             disableCloseOnSelect
             getOptionLabel={(option) => option.name}
             renderOption={(props, option, { selected }) => {
@@ -45,8 +42,7 @@ export default function UserSelector({ default_users, onUsersChange }: TProps) {
                 <TextField sx={{ mt: 2 }} {...params} label="Пользователи" />
             )}
             onChange={(event: any, newValue: TUser[] | null) => {
-                setSelectedUsers(newValue || []);
-                if (onUsersChange) onUsersChange(newValue);
+                if (updateValue) updateValue(newValue || []);
             }}
             sx={{ mt: 2 }}
         />

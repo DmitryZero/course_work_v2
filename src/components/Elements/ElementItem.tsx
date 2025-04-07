@@ -4,13 +4,17 @@ import { useState } from 'react';
 import { TGroup } from '../../interfaces/TGroup';
 import { Button, Collapse, FormGroup, IconButton, Paper, TextField } from '@mui/material';
 import GroupSelector from '../Groups/GroupSelector';
+import { TPermissionGroups } from '../../interfaces/TPermissionGroups';
 
 type TProps = {
     element: TElement,
     is_readonly?: boolean
+    groups?: TGroup[],
+    updateItem?: (update_item: TElement) => void
+    deleteElement?: (item_to_delete: TElement) => void,
 }
 
-export default function ElementItem({ element, is_readonly}: TProps) {
+export default function ElementItem({ element, is_readonly, groups, updateItem, deleteElement }: TProps) {
     const [is_open, setOpenElements] = useState<boolean>(false);
 
     const toggleElement = (id: string) => {
@@ -18,21 +22,31 @@ export default function ElementItem({ element, is_readonly}: TProps) {
     };
 
     const [currrent_element, setCurrentElement] = useState<TElement>(element);
+    const [current_permissions, setPermission] = useState<TPermissionGroups>(element.permissions || {
+        read: null,
+        write: null,
+        delete: null
+    });
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         setCurrentElement({ ...currrent_element, [e.target.name]: e.target.value });
     }
 
-    function handlePermissionChange(permission: "read" | "write" | "delete", group: TGroup) {
-        setCurrentElement((prev) => ({
-            ...prev,
-            permissions: {
-                ...prev.permissions,
-                [permission]: group
-            },
-        }));
+    const handlePermissionUpdate = (group: TGroup | null, field_name?: string) => {
+        if (field_name === "Чтение") setPermission({...current_permissions, read: group});
+        else if (field_name === "Редактирование") setPermission({...current_permissions, write: group});
+        else setPermission({...current_permissions, delete: group});
     }
-    
+
+    const handleUpdate = () => {
+        if (updateItem) updateItem({ ...currrent_element, permissions: current_permissions });
+    }
+
+    const handleDelete = () => {
+        console.log("handleDelete");
+        if (deleteElement) deleteElement(currrent_element)
+    }
+
     return (
         <>
             <Paper className="p-4" sx={{ mt: 2 }}>
@@ -47,7 +61,7 @@ export default function ElementItem({ element, is_readonly}: TProps) {
                     </Button>
                     {
                         !is_readonly &&
-                        <IconButton aria-label="delete">
+                        <IconButton aria-label="delete" onClick={handleDelete}>
                             <DeleteIcon />
                         </IconButton>
                     }
@@ -83,11 +97,11 @@ export default function ElementItem({ element, is_readonly}: TProps) {
                         variant={is_readonly ? "filled" : "outlined"}
                     />
                     <FormGroup sx={{ mt: 2, "& > *": { mt: 2 } }}>
-                        <GroupSelector is_read_only={is_readonly} initial_group={currrent_element.permissions.read} field_name="Чтение" chooseGroup={(g) => handlePermissionChange("read", g)} />
-                        <GroupSelector is_read_only={is_readonly} initial_group={currrent_element.permissions.write} field_name="Редактирование" chooseGroup={(g) => handlePermissionChange("write", g)} />
-                        <GroupSelector is_read_only={is_readonly} initial_group={currrent_element.permissions.delete} field_name="Удаление" chooseGroup={(g) => handlePermissionChange("delete", g)} />
+                        <GroupSelector is_read_only={is_readonly} value={current_permissions.read} variants={groups || []} field_name="Чтение" setValue={handlePermissionUpdate} />
+                        <GroupSelector is_read_only={is_readonly} value={current_permissions.write} variants={groups || []} field_name="Редактирование" setValue={handlePermissionUpdate} />
+                        <GroupSelector is_read_only={is_readonly} value={current_permissions.delete} variants={groups || []} field_name="Удаление" setValue={handlePermissionUpdate} />
                     </FormGroup>
-                    <Button sx={{ mt: 2 }} variant="contained" color="primary">
+                    <Button sx={{ mt: 2 }} variant="contained" color="primary" onClick={handleUpdate}>
                         Обновить
                     </Button>
                 </Collapse>

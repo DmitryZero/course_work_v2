@@ -1,12 +1,9 @@
 import { TGroup } from "./TGroup";
+import { TPermissionGroups } from "./TPermissionGroups";
 
 export type TElement = {
     id: string,
     name: string;
     description: string,
-    permissions: {
-        read?: TGroup | undefined,
-        write?: TGroup | undefined,
-        delete?: TGroup | undefined,
-    }
+    permissions?: TPermissionGroups
 };

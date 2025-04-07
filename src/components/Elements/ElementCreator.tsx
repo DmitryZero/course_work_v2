@@ -4,37 +4,46 @@ import { TElement } from "../../interfaces/TElement";
 import { TGroup } from "../../interfaces/TGroup";
 import { Button, FormGroup, Paper, TextField } from "@mui/material";
 import GroupSelector from "../Groups/GroupSelector";
+import { useElementStore } from "./ElementStore";
+import { TPermissionGroups } from "../../interfaces/TPermissionGroups";
 
 export default function ElementCreator() {
     const groups = useGroupStore(state => state.groups);
+    const createElement = useElementStore(state => state.createElement);
 
     const [element, setElement] = useState<TElement>({
         id: "",
         name: "",
-        description: "",
-        permissions: {
-            read: undefined,
-            write: undefined,
-            delete: undefined
-        }
+        description: ""
+    });
+    const [current_permissions, setPermission] = useState<TPermissionGroups>({
+        read: null,
+        write: null,
+        delete: null
     });
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const handleTextFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setElement({ ...element, [e.target.name]: e.target.value });
     }
 
-    function handlePermissionChange(permission: "read" | "write" | "delete", group: TGroup) {
-        setElement((prev) => ({
-            ...prev,
-            permissions: {
-                ...prev.permissions,
-                [permission]: group
-            },
-        }));
+    const handleCreate = () => {
+        createElement({ ...element, permissions: current_permissions });
+        setElement({
+            id: "",
+            name: "",
+            description: "",
+        });
+        setPermission({
+            read: null,
+            write: null,
+            delete: null
+        });
     }
 
-    function handleCreate() {
-        // setCurrentItems({ ...current_items,  });
+    const handlePermissionUpdate = (group: TGroup | null, field_name?: string) => {
+        if (field_name === "Чтение") setPermission({...current_permissions, read: group});
+        else if (field_name === "Редактирование") setPermission({...current_permissions, write: group});
+        else setPermission({...current_permissions, delete: group});
     }
 
     return (
@@ -46,20 +55,20 @@ export default function ElementCreator() {
                 value={element.name}
                 fullWidth
                 sx={{ mt: 2 }}
-                onChange={handleChange}
+                onChange={handleTextFieldChange}
             />
             <TextField
                 label="Описание"
                 name="description"
                 value={element.description}
-                onChange={handleChange}
+                onChange={handleTextFieldChange}
                 fullWidth
                 sx={{ mt: 2 }}
             />
             <FormGroup sx={{ mt: 2, "& > *": { mt: 2 } }}>
-                <GroupSelector field_name="Чтение" chooseGroup={(g) => handlePermissionChange("read", g)} />
-                <GroupSelector field_name="Редактирование" chooseGroup={(g) => handlePermissionChange("write", g)} />
-                <GroupSelector field_name="Удаление" chooseGroup={(g) => handlePermissionChange("delete", g)} />
+                <GroupSelector field_name="Чтение" value={current_permissions.read} variants={groups} setValue={handlePermissionUpdate} />
+                <GroupSelector field_name="Редактирование" value={current_permissions.write} variants={groups} setValue={handlePermissionUpdate} />
+                <GroupSelector field_name="Удаление" value={current_permissions.delete} variants={groups} setValue={handlePermissionUpdate} />
             </FormGroup>
             <Button sx={{ mt: 2 }} onClick={handleCreate} variant="contained" color="primary">
                 Создать

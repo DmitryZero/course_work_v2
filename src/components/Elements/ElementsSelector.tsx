@@ -6,22 +6,21 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Autocomplete, Checkbox, TextField } from "@mui/material";
 
 type TProps = {
-    default_elements?: TElement[] | undefined
-    // updateElementList: Act<TElement[]>
+    value?: TElement[] | null,
+    variants: TElement[],
+    setCurrentValue: (new_value: TElement[] | null, field_name?: string) => void,
+    fieldName: string
 }
 
-export default function ElementSelector({ default_elements }: TProps) {
-    const elements = useElementStore(state => state.elements);
-    const [selected_elements, setSelectedElements] = useState<TElement[]>(default_elements || []);
-
+export default function ElementSelector({ value, variants, fieldName, setCurrentValue }: TProps) {
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     return (
         <Autocomplete
-            multiple
-            options={elements}
-            value={selected_elements}
+            multiple            
+            options={variants}
+            value={value || []}
             disableCloseOnSelect
             getOptionLabel={(option) => option.name}
             renderOption={(props, option, { selected }) => {
@@ -40,10 +39,10 @@ export default function ElementSelector({ default_elements }: TProps) {
             }}
             style={{ width: 500 }}
             renderInput={(params) => (
-                <TextField {...params} label="Элементы" />
+                <TextField {...params} label={fieldName} />
             )}
             onChange={(event: any, newValue: TElement[] | null) => {
-                setSelectedElements(newValue || []);
+                setCurrentValue(newValue || [], fieldName);
             }}
             sx={{ mt: 2 }}
         />

@@ -8,27 +8,19 @@ import { TGroup } from "../../interfaces/TGroup";
 type TProps = {
     field_name: string,
     is_read_only?: boolean,
-    initial_group?: TGroup
-    chooseGroup: (group: TGroup) => void
+    value?: TGroup | null,
+    variants: TGroup[],
+    setValue?: (group: TGroup | null, field_name?: string) => void
 }
 
-export default function GroupSelector({ field_name, is_read_only, initial_group, chooseGroup }: TProps) {
-    const groups = useGroupStore(state => state.groups);
-    const [current_group, setCurrentGroup] = useState<TGroup | null>(groups.find(g => g.id === initial_group?.id) || null);
-
-    const handleChange = (event: SelectChangeEvent) => {
-        const selected_group = groups.find(g => g.id === (event.target.value as string));
-        setCurrentGroup(selected_group || null);
-        chooseGroup(selected_group!)
-    };
-
+export default function GroupSelector({ field_name, is_read_only, setValue, value, variants}: TProps) {
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     return (
         <Autocomplete
-            options={groups}
-            value={current_group}
+            options={variants}
+            value={value || null}
             disableCloseOnSelect
             getOptionLabel={(option) => option.name}
             renderOption={(props, option, { selected }) => {
@@ -50,7 +42,7 @@ export default function GroupSelector({ field_name, is_read_only, initial_group,
                 <TextField {...params} label={field_name} />
             )}
             onChange={(event: any, newValue: TGroup | null) => {
-                setCurrentGroup(newValue);
+                if (setValue) setValue(newValue, field_name)
             }}
             sx={{ mt: 2 }}
             readOnly={is_read_only}

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import { TGroup } from '../../interfaces/TGroup';
+import { useNotificationStore } from '../General/NotificationStore';
 
 interface GroupDataStore {
     groups: TGroup[],
@@ -14,7 +15,10 @@ interface GroupDataStore {
 export const useGroupStore = create<GroupDataStore>()(devtools(immer((set) => ({
     groups: [],
     createGroup: (new_item) => set(state => {
-        state.groups.push(new_item)
+        state.groups.push(new_item);
+
+        const { showNotification } = useNotificationStore.getState();
+        showNotification({ message: `Группа "${new_item.name}" успешно создана`, severity: "success" });
     }),
     updateGroup: (update_item) => set(state => {
         const item_to_update_index = state.groups.findIndex(e => e.id === update_item.id);

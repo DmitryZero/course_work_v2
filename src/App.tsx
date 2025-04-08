@@ -11,7 +11,8 @@ import { useGroupStore } from './components/Groups/GroupStore';
 import ElementCreator from './components/Elements/ElementCreator';
 import GroupCreator from './components/Groups/GroupCreator';
 import GroupList from './components/Groups/GroupList';
-import { Grid } from '@mui/material';
+import { Alert, Grid, Snackbar } from '@mui/material';
+import { useNotificationStore } from './components/General/NotificationStore';
 
 function App() {
   const users: TUser[] = [
@@ -47,6 +48,7 @@ function App() {
   }, [])
 
   const current_user = useUserStore(state => state.currentUser);
+  const { notification, clearNotification } = useNotificationStore();
 
   return (
     <div className="p-4 space-y-4">
@@ -69,6 +71,16 @@ function App() {
           }
         </Grid>
       </Grid>
+
+      <Snackbar
+        open={!!notification}
+        autoHideDuration={3000}
+        onClose={clearNotification}
+      >
+        <Alert onClose={clearNotification} severity={notification?.severity || "info"}>
+          {notification?.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

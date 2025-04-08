@@ -13,7 +13,7 @@ export default function GroupCreator() {
     const all_users = useUserStore(state => state.users);
 
     const [current_group, setCurrentGroup] = useState<TGroup>({
-        id: "",
+        id: crypto.randomUUID(),
         name: "",
         parent_group: null,
         users: []
@@ -26,7 +26,7 @@ export default function GroupCreator() {
     function handleCreate() {
         createGroup(current_group);
         setCurrentGroup({
-            id: "",
+            id: crypto.randomUUID(),
             name: "",
             parent_group: null,
             users: []

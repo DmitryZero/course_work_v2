@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TGroup } from "../../interfaces/TGroup";
 import { Button, Collapse, IconButton, Paper, TextField } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -31,6 +31,13 @@ export default function GroupItem({ all_users, all_elements, all_groups, group, 
         write: null,
         delete: null
     });
+    useEffect(() => {
+        setPermission(group.permissions || {
+            read: null,
+            write: null,
+            delete: null
+        });
+    }, [group.permissions]);
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         setCurrentGroup({ ...currrent_group, [e.target.name]: e.target.value });

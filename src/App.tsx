@@ -14,6 +14,7 @@ import GroupList from './components/Groups/GroupList';
 import { Alert, Grid, Snackbar } from '@mui/material';
 import { useNotificationStore } from './components/General/NotificationStore';
 
+
 function App() {
   const users: TUser[] = [
     { id: "1", name: "Admin - Никитин Дмитрий", is_admin: true },
@@ -36,6 +37,11 @@ function App() {
   ];
 
   groups[0].parent_group = groups[1];
+  groups[0].permissions = {
+    read:  [items[0], items[1]],
+    write: null,
+    delete: null
+  };
   users[0].user_groups = [groups[1]];
 
   const fetchUser = useUserStore(state => state.fetchUsers);
@@ -43,12 +49,14 @@ function App() {
   const fetchGroups = useGroupStore(state => state.fetchGroups);
   useEffect(() => {
     fetchUser(users);
-    fetchElements(items);
-    fetchGroups(groups);
+    // fetchElements(items);
+    // fetchGroups(groups);
+    // fetchUser();
   }, [])
 
   const current_user = useUserStore(state => state.currentUser);
-  const { notification, clearNotification } = useNotificationStore();
+  const notifications = useNotificationStore(state => state.notifications);
+  const removeNotification = useNotificationStore(state => state.removeNotification);
 
   return (
     <div className="p-4 space-y-4">
@@ -73,13 +81,16 @@ function App() {
       </Grid>
 
       <Snackbar
-        open={!!notification}
+        open={notifications.length > 0}
         autoHideDuration={3000}
-        onClose={clearNotification}
+        onClose={removeNotification}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert onClose={clearNotification} severity={notification?.severity || "info"}>
-          {notification?.message}
-        </Alert>
+        {notifications[0] && (
+          <Alert severity={notifications[0].severity} variant="filled">
+            {notifications[0].message}
+          </Alert>
+        )}
       </Snackbar>
     </div>
   );

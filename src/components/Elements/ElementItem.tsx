@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import { TElement } from '../../interfaces/TElement';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TGroup } from '../../interfaces/TGroup';
 import { Button, Collapse, FormGroup, IconButton, Paper, TextField } from '@mui/material';
 import GroupSelector from '../Groups/GroupSelector';
@@ -27,6 +27,14 @@ export default function ElementItem({ element, is_readonly, groups, updateItem, 
         write: null,
         delete: null
     });
+
+    useEffect(() => {
+        setPermission(element.permissions || {
+            read: null,
+            write: null,
+            delete: null
+        });
+    }, [element.permissions]);
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
         setCurrentElement({ ...currrent_element, [e.target.name]: e.target.value });

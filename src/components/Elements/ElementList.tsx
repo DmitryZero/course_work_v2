@@ -10,7 +10,7 @@ export default function ElementList({ is_readonly }: TProps) {
     const elements = useElementStore(state => state.elements);
     const updateItem = useElementStore(state => state.updateElement);
     const deleteItem = useElementStore(state => state.deleteElement);
-    const groups = useGroupStore(state => state.groups)
+    const groups = useGroupStore(state => state.groups);
 
     return (
         <>

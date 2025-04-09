@@ -6,6 +6,7 @@ import { Button, FormGroup, Paper, TextField } from "@mui/material";
 import GroupSelector from "../Groups/GroupSelector";
 import { useElementStore } from "./ElementStore";
 import { TPermissionGroups } from "../../interfaces/TPermissionGroups";
+import MultipleGroupSelector from "../Groups/MultipleGroupSelector";
 
 export default function ElementCreator() {
     const groups = useGroupStore(state => state.groups);
@@ -17,9 +18,9 @@ export default function ElementCreator() {
         description: ""
     });
     const [current_permissions, setPermission] = useState<TPermissionGroups>({
-        read: null,
-        write: null,
-        delete: null
+        read_ids: null,
+        write_ids: null,
+        delete_ids: null
     });
 
     const handleTextFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,16 +35,16 @@ export default function ElementCreator() {
             description: "",
         });
         setPermission({
-            read: null,
-            write: null,
-            delete: null
+            read_ids: null,
+            write_ids: null,
+            delete_ids: null
         });
     }
 
-    const handlePermissionUpdate = (group: TGroup | null, field_name?: string) => {
-        if (field_name === "Чтение") setPermission({...current_permissions, read: group});
-        else if (field_name === "Редактирование") setPermission({...current_permissions, write: group});
-        else setPermission({...current_permissions, delete: group});
+    const handlePermissionUpdate = (group: TGroup[] | null, field_name?: string) => {
+        if (field_name === "Чтение") setPermission({...current_permissions, read_ids: group?.map(i => i.id) || null});
+        else if (field_name === "Редактирование") setPermission({...current_permissions, write_ids: group?.map(i => i.id) || null});
+        else setPermission({...current_permissions, delete_ids: group?.map(i => i.id) || null});
     }
 
     return (
@@ -66,9 +67,9 @@ export default function ElementCreator() {
                 sx={{ mt: 2 }}
             />
             <FormGroup sx={{ mt: 2, "& > *": { mt: 2 } }}>
-                <GroupSelector field_name="Чтение" value={current_permissions.read} variants={groups} setValue={handlePermissionUpdate} />
-                <GroupSelector field_name="Редактирование" value={current_permissions.write} variants={groups} setValue={handlePermissionUpdate} />
-                <GroupSelector field_name="Удаление" value={current_permissions.delete} variants={groups} setValue={handlePermissionUpdate} />
+                <MultipleGroupSelector field_name="Чтение" value_ids={current_permissions.read_ids} variants={groups} setValue={handlePermissionUpdate} />
+                <MultipleGroupSelector field_name="Редактирование" value_ids={current_permissions.write_ids} variants={groups} setValue={handlePermissionUpdate} />
+                <MultipleGroupSelector field_name="Удаление" value_ids={current_permissions.delete_ids} variants={groups} setValue={handlePermissionUpdate} />
             </FormGroup>
             <Button sx={{ mt: 2 }} onClick={handleCreate} variant="contained" color="primary">
                 Создать

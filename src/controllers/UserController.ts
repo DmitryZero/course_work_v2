@@ -1,9 +1,9 @@
-import { TElement } from "../interfaces/TElement";
-import { sendSQLMessage } from "../utility/sendSQLMessage";
+import { dbController } from "../components/dbController/dbController";
+import UserDto from "../dto/Userdto";
 
-export const userController = {
+export const UserController = {
     async getUsers() {
-        const users_db_data = await sendSQLMessage("select * from User");
-        console.log(users_db_data);
+        const users_db_data = await dbController.sendSQLRequest("select * from User");
+        return UserDto(users_db_data);
     }
 }

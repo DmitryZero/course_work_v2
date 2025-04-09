@@ -15,8 +15,8 @@ export default function GroupCreator() {
     const [current_group, setCurrentGroup] = useState<TGroup>({
         id: crypto.randomUUID(),
         name: "",
-        parent_group: null,
-        users: []
+        parent_group_id: null,
+        users_ids: []
     });
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -28,17 +28,17 @@ export default function GroupCreator() {
         setCurrentGroup({
             id: crypto.randomUUID(),
             name: "",
-            parent_group: null,
-            users: []
+            parent_group_id: null,
+            users_ids: []
         })
     }
 
     const handleUsersChange = (users: TUser[] | undefined) => {
-        setCurrentGroup({ ...current_group, users: users || [] });
+        setCurrentGroup({ ...current_group, users_ids: (users || []).map(i => i.id) });
     }
 
     const handleGroupChange = (edited_group: TGroup | null, field_name?: string) => {
-        setCurrentGroup({...current_group, parent_group: edited_group});
+        setCurrentGroup({...current_group, parent_group_id: edited_group?.id});
     }
 
     return (
@@ -54,9 +54,9 @@ export default function GroupCreator() {
                     onChange={handleChange}
                 />
                 <FormGroup sx={{ mt: 2, "& > *": { mt: 2 } }}>
-                    <GroupSelector value={current_group.parent_group} variants={groups} setValue={handleGroupChange} field_name="Родитель" />
+                    <GroupSelector value_id={current_group.parent_group_id} variants={groups} setValue={handleGroupChange} field_name="Родитель" />
                 </FormGroup>
-                <UserSelector value={current_group.users} variants={all_users} updateValue={handleUsersChange} />
+                <UserSelector value_ids={current_group.users_ids} variants={all_users} updateValue={handleUsersChange} />
                 <Button sx={{ mt: 2 }} onClick={handleCreate} variant="contained" color="primary">
                     Создать
                 </Button>

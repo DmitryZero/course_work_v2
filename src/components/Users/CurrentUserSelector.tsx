@@ -37,6 +37,7 @@ export default function CurrentUserSelector() {
                 <TextField {...params} label={"Текущий пользователь"} />
             )}
             onChange={(event: any, newValue: TUser | null) => {
+                if (newValue === null) return;
                 setCurrentUser(newValue)
             }}
             sx={{ mt: 2 }}

@@ -5,7 +5,7 @@ import { TUser } from "./TUser";
 export type TGroup = {
     id: string,
     name: string,
-    parent_group?: TGroup | null,
-    users?: TUser[],   
+    parent_group_id?: string | null,
+    users_ids?: string[],   
     permissions?: TPermissionElements 
 };

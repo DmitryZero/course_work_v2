@@ -5,6 +5,7 @@ import { TGroup } from '../../interfaces/TGroup';
 import { Button, Collapse, FormGroup, IconButton, Paper, TextField } from '@mui/material';
 import GroupSelector from '../Groups/GroupSelector';
 import { TPermissionGroups } from '../../interfaces/TPermissionGroups';
+import MultipleGroupSelector from '../Groups/MultipleGroupSelector';
 
 type TProps = {
     element: TElement,
@@ -23,16 +24,16 @@ export default function ElementItem({ element, is_readonly, groups, updateItem, 
 
     const [currrent_element, setCurrentElement] = useState<TElement>(element);
     const [current_permissions, setPermission] = useState<TPermissionGroups>(element.permissions || {
-        read: null,
-        write: null,
-        delete: null
+        read_ids: null,
+        write_ids: null,
+        delete_ids: null
     });
 
     useEffect(() => {
         setPermission(element.permissions || {
-            read: null,
-            write: null,
-            delete: null
+            read_ids: null,
+            write_ids: null,
+            delete_ids: null
         });
     }, [element.permissions]);
 
@@ -40,10 +41,10 @@ export default function ElementItem({ element, is_readonly, groups, updateItem, 
         setCurrentElement({ ...currrent_element, [e.target.name]: e.target.value });
     }
 
-    const handlePermissionUpdate = (group: TGroup | null, field_name?: string) => {
-        if (field_name === "Чтение") setPermission({...current_permissions, read: group});
-        else if (field_name === "Редактирование") setPermission({...current_permissions, write: group});
-        else setPermission({...current_permissions, delete: group});
+    const handlePermissionUpdate = (group: TGroup[] | null, field_name?: string) => {
+        if (field_name === "Чтение") setPermission({ ...current_permissions, read_ids: group?.map(i => i.id) || null });
+        else if (field_name === "Редактирование") setPermission({ ...current_permissions, write_ids: group?.map(i => i.id) || null });
+        else setPermission({ ...current_permissions, delete_ids: group?.map(i => i.id) || null });
     }
 
     const handleUpdate = () => {
@@ -67,12 +68,9 @@ export default function ElementItem({ element, is_readonly, groups, updateItem, 
                     >
                         {is_open ? "Скрыть" : "Развернуть"}
                     </Button>
-                    {
-                        !is_readonly &&
-                        <IconButton aria-label="delete" onClick={handleDelete}>
-                            <DeleteIcon />
-                        </IconButton>
-                    }
+                    <IconButton aria-label="delete" onClick={handleDelete}>
+                        <DeleteIcon />
+                    </IconButton>
                 </h3>
 
                 <Collapse in={is_open}>
@@ -105,9 +103,9 @@ export default function ElementItem({ element, is_readonly, groups, updateItem, 
                         variant={is_readonly ? "filled" : "outlined"}
                     />
                     <FormGroup sx={{ mt: 2, "& > *": { mt: 2 } }}>
-                        <GroupSelector is_read_only={is_readonly} value={current_permissions.read} variants={groups || []} field_name="Чтение" setValue={handlePermissionUpdate} />
-                        <GroupSelector is_read_only={is_readonly} value={current_permissions.write} variants={groups || []} field_name="Редактирование" setValue={handlePermissionUpdate} />
-                        <GroupSelector is_read_only={is_readonly} value={current_permissions.delete} variants={groups || []} field_name="Удаление" setValue={handlePermissionUpdate} />
+                        <MultipleGroupSelector is_read_only={is_readonly} value_ids={current_permissions.read_ids} variants={groups || []} field_name="Чтение" setValue={handlePermissionUpdate} />
+                        <MultipleGroupSelector is_read_only={is_readonly} value_ids={current_permissions.write_ids} variants={groups || []} field_name="Редактирование" setValue={handlePermissionUpdate} />
+                        <MultipleGroupSelector is_read_only={is_readonly} value_ids={current_permissions.delete_ids} variants={groups || []} field_name="Удаление" setValue={handlePermissionUpdate} />
                     </FormGroup>
                     <Button sx={{ mt: 2 }} variant="contained" color="primary" onClick={handleUpdate}>
                         Обновить

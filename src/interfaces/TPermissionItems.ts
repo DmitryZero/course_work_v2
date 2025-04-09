@@ -1,7 +1,7 @@
 import { TElement } from "./TElement";
 
 export type TPermissionElements = {
-    read: TElement[] | null,
-    write: TElement[] | null,
-    delete: TElement[] | null,
+    read_ids: string[] | null,
+    write_ids: string[] | null,
+    delete_ids: string[] | null,
 }

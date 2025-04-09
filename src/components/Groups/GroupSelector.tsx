@@ -8,19 +8,19 @@ import { TGroup } from "../../interfaces/TGroup";
 type TProps = {
     field_name: string,
     is_read_only?: boolean,
-    value?: TGroup | null,
+    value_id?: string | null,
     variants: TGroup[],
     setValue?: (group: TGroup | null, field_name?: string) => void
 }
 
-export default function GroupSelector({ field_name, is_read_only, setValue, value, variants}: TProps) {
+export default function GroupSelector({ field_name, is_read_only, setValue, value_id, variants}: TProps) {
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     return (
         <Autocomplete
             options={variants}
-            value={value || null}
+            value={variants.find(i => i.id === value_id)}
             disableCloseOnSelect
             getOptionLabel={(option) => option.name}
             renderOption={(props, option, { selected }) => {

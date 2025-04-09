@@ -16,42 +16,13 @@ import { useNotificationStore } from './components/General/NotificationStore';
 
 
 function App() {
-  const users: TUser[] = [
-    { id: "1", name: "Admin - Никитин Дмитрий", is_admin: true },
-    { id: "2", name: "Ложкин Ярослав" },
-    { id: "3", name: "Смирнов Никита" },
-    { id: "4", name: "Максимов Андрей" },
-  ];
-
-  const groups: TGroup[] = [
-    { id: "1", name: "Группа 1", users: [users[0], users[1]] },
-    { id: "2", name: "Группа 2" },
-  ];
-
-  const items: TElement[] = [
-    { id: "1", name: "Test 1", description: "Test 1_", permissions: { read: groups[0], write: groups[1], delete: null } },
-    { id: "2", name: "Test 2", description: "Test 2_" },
-    { id: "3", name: "Test 3", description: "Test 3_" },
-    { id: "4", name: "Test 4", description: "Test 4_" },
-    { id: "5", name: "Test 5", description: "Test 5_" },
-  ];
-
-  groups[0].parent_group = groups[1];
-  groups[0].permissions = {
-    read:  [items[0], items[1]],
-    write: null,
-    delete: null
-  };
-  users[0].user_groups = [groups[1]];
-
   const fetchUser = useUserStore(state => state.fetchUsers);
-  const fetchElements = useElementStore(state => state.fetchElements);
   const fetchGroups = useGroupStore(state => state.fetchGroups);
-  useEffect(() => {
-    fetchUser(users);
-    // fetchElements(items);
-    // fetchGroups(groups);
-    // fetchUser();
+  const fetchElements = useElementStore(state => state.fetchElements);
+  useEffect(() => {    
+    fetchUser();
+    fetchGroups();
+    fetchElements();
   }, [])
 
   const current_user = useUserStore(state => state.currentUser);

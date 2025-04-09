@@ -27,15 +27,15 @@ export default function GroupItem({ all_users, all_elements, all_groups, group, 
 
     const [currrent_group, setCurrentGroup] = useState<TGroup>(group);
     const [current_permissions, setPermission] = useState<TPermissionElements>(currrent_group.permissions || {
-        read: null,
-        write: null,
-        delete: null
+        read_ids: null,
+        write_ids: null,
+        delete_ids: null
     });
     useEffect(() => {
         setPermission(group.permissions || {
-            read: null,
-            write: null,
-            delete: null
+            read_ids: null,
+            write_ids: null,
+            delete_ids: null
         });
     }, [group.permissions]);
 
@@ -44,13 +44,13 @@ export default function GroupItem({ all_users, all_elements, all_groups, group, 
     }
 
     function handleParentGroupsChange(group: TGroup | null, field_name?: string) {
-        setCurrentGroup({ ...currrent_group, parent_group: group });
+        setCurrentGroup({ ...currrent_group, parent_group_id: group?.id });
     }
 
     function handleElementsChange(new_value: TElement[] | null, field_name?: string) {
-        if (field_name === "Чтение") setPermission({ ...current_permissions, read: new_value });
-        else if (field_name === "Редактирование") setPermission({ ...current_permissions, write: new_value });
-        else setPermission({ ...current_permissions, delete: new_value });
+        if (field_name === "Чтение") setPermission({ ...current_permissions, read_ids: new_value?.map(i => i.id) || null });
+        else if (field_name === "Редактирование") setPermission({ ...current_permissions, write_ids: new_value?.map(i => i.id) || null });
+        else setPermission({ ...current_permissions, delete_ids: new_value?.map(i => i.id) || null });
     }
 
     const handleUpdate = () => {
@@ -87,12 +87,12 @@ export default function GroupItem({ all_users, all_elements, all_groups, group, 
                         sx={{ mt: 2 }}
                         onChange={handleChange}
                     />
-                    <UserSelector value={group.users} variants={all_users} />
-                    <GroupSelector value={group.parent_group} variants={all_groups} field_name="Родитель" setValue={handleParentGroupsChange} />
+                    <UserSelector value_ids={group.users_ids} variants={all_users} />
+                    <GroupSelector value_id={group.parent_group_id} variants={all_groups} field_name="Родитель" setValue={handleParentGroupsChange} />
                     <div>
-                        <ElementSelector value={current_permissions.read} fieldName="Чтение" variants={all_elements} setCurrentValue={handleElementsChange} />
-                        <ElementSelector value={current_permissions.write} fieldName="Редактирование" variants={all_elements} setCurrentValue={handleElementsChange} />
-                        <ElementSelector value={current_permissions.delete} fieldName="Удаление" variants={all_elements} setCurrentValue={handleElementsChange} />
+                        <ElementSelector value_ids={current_permissions.read_ids} fieldName="Чтение" variants={all_elements} setCurrentValue={handleElementsChange} />
+                        <ElementSelector value_ids={current_permissions.write_ids} fieldName="Редактирование" variants={all_elements} setCurrentValue={handleElementsChange} />
+                        <ElementSelector value_ids={current_permissions.delete_ids} fieldName="Удаление" variants={all_elements} setCurrentValue={handleElementsChange} />
                     </div>
                     <Button sx={{ mt: 2 }} variant="contained" color="primary" onClick={handleUpdate}>
                         Обновить

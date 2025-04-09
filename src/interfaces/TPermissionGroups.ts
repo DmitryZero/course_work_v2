@@ -1,7 +1,7 @@
 import { TGroup } from "./TGroup";
 
 export type TPermissionGroups = {
-    read: TGroup | null,
-    write: TGroup | null,
-    delete: TGroup | null,
+    read_ids: string[] | null,
+    write_ids: string[] | null,
+    delete_ids: string[] | null,
 }

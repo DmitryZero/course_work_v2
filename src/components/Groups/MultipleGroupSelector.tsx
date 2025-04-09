@@ -1,18 +1,19 @@
+import { Autocomplete, Box, Checkbox, SelectChangeEvent, TextField } from "@mui/material";
 import { useState } from "react";
-import { TUser } from "../../interfaces/TUser";
-import { useUserStore } from "./UserStore";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { Autocomplete, Checkbox, TextField } from "@mui/material";
+import { useGroupStore } from "./GroupStore";
+import { TGroup } from "../../interfaces/TGroup";
 
 type TProps = {
-    value_ids: string[] | undefined
-    updateValue?: (users: TUser[] | undefined) => void,
-    variants: TUser[]
-    // updateElementList: Act<TElement[]>
+    field_name: string,
+    is_read_only?: boolean,
+    value_ids?: string[] | null,
+    variants: TGroup[],
+    setValue?: (group: TGroup[] | null, field_name?: string) => void
 }
 
-export default function UserSelector({ value_ids, updateValue, variants }: TProps) {
+export default function MultipleGroupSelector({ field_name, is_read_only, setValue, value_ids, variants }: TProps) {
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -39,12 +40,14 @@ export default function UserSelector({ value_ids, updateValue, variants }: TProp
             }}
             style={{ width: 500 }}
             renderInput={(params) => (
-                <TextField sx={{ mt: 2 }} {...params} label="Пользователи" />
+                <TextField {...params} label={field_name} />
             )}
-            onChange={(event: any, newValue: TUser[] | null) => {
-                if (updateValue) updateValue(newValue || []);
+            onChange={(event: any, newValue: TGroup[] | null) => {
+                if (setValue) setValue(newValue, field_name)
             }}
             sx={{ mt: 2 }}
+            readOnly={is_read_only}
+            disabled={is_read_only}
         />
     );
 }

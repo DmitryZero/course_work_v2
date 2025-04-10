@@ -5,6 +5,8 @@ export const dbController = {
         try {
             const url = `${process.env.REACT_APP_DB_URL}:${process.env.REACT_APP_DB_PORT}/command/${process.env.REACT_APP_DB_NAME}/sql`;
             const token = btoa(`${process.env.REACT_APP_ATHOURIZATION_LOGIN}:${process.env.REACT_APP_ATHOURIZATION_PASSWORD}`)
+            
+            console.log("body", { command: sql_string })
 
             const response = await fetch(url, {
                 method: "POST",
@@ -12,7 +14,7 @@ export const dbController = {
                 headers: {
                     "Authorization": `Basic ${token}`
                 }
-            })
+            })            
 
             const json = await response.json();            
             return json;

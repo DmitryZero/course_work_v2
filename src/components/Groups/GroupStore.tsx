@@ -19,27 +19,38 @@ interface GroupDataStore {
 
 export const useGroupStore = create<GroupDataStore>()(devtools(immer((set) => ({
     groups: [],
-    createGroup: (new_item) => set(state => {
-        state.groups.push(new_item);
+    createGroup: async (new_item) => {
+        const new_item_from_bd = await GroupController.createGroup(new_item);
+        new_item.id = new_item_from_bd[0].id;
+        set((state) => {
+            state.groups.push(new_item);
+            sendMessage(`Группа "${new_item.name}" успешно создана`);
+        })
+    },
+    updateGroup: async (new_item) => {
+        await GroupController.updateGroup(new_item);
 
-        sendMessage(`Группа "${new_item.name}" успешно создана`);
-    }),
-    updateGroup: (update_item) => set(state => {
-        const item_to_update_index = state.groups.findIndex(e => e.id === update_item.id);
-        if (item_to_update_index === -1) throw new Error(`updateElement not found`);
+        set((state) => {
+            const item_to_update_index = state.groups.findIndex(e => e.id === new_item.id);
+            if (item_to_update_index === -1) throw new Error(`updateElement not found`);
 
-        state.groups[item_to_update_index] = update_item;
-        sendMessage(`Группа "${update_item.name}" успешно обновлена`);
-    }),
-    deleteGroup: (item_to_delete) => set(state => {
-        state.groups = state.groups.filter(i => i.id !== item_to_delete.id);
-
-        useElementStore.getState().removeGroup(item_to_delete);
-        sendMessage(`Группа "${item_to_delete.name}" успешно удалена`);
-    }),
+            state.groups[item_to_update_index] = new_item;
+            sendMessage(`Группа "${new_item.name}" успешно обновлена`);
+        })
+    },
     fetchGroups: async () => {
         const groups_db = await GroupController.getGroups();
         set({ groups: groups_db });
+    },
+    deleteGroup: async (item_to_delete) => {
+        await GroupController.deleteGroup(item_to_delete);
+
+        set((state) => {
+            state.groups = state.groups.filter(i => i.id !== item_to_delete.id);
+
+            useElementStore.getState().removeGroup(item_to_delete);
+            sendMessage(`Группа "${item_to_delete.name}" успешно удалена`);
+        })
     },
     removeElement: (element: TElement) => set(state => {
         const updated_groups = state.groups.map(group => {

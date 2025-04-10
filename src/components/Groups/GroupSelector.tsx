@@ -20,7 +20,7 @@ export default function GroupSelector({ field_name, is_read_only, setValue, valu
     return (
         <Autocomplete
             options={variants}
-            value={variants.find(i => i.id === value_id)}
+            value={variants.find(i => i.id === value_id) || null}
             disableCloseOnSelect
             getOptionLabel={(option) => option.name}
             renderOption={(props, option, { selected }) => {

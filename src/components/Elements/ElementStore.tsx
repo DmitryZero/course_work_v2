@@ -25,19 +25,27 @@ export const useElementStore = create<ElementDataStore>()(devtools(immer((set) =
             state.elements.push(new_item)
         })
     },
-    updateElement: (updated_item) => set(state => {
-        const item_to_update_index = state.elements.findIndex(e => e.id === updated_item.id);
-        if (item_to_update_index === -1) throw new Error(`updateElement not found`);
+    updateElement: async (new_item) => {
+        await ElementController.updateElement(new_item);
 
-        state.elements[item_to_update_index] = updated_item;
-        sendMessage(`Элемент "${updated_item.name}" успешно обновлён`);
-    }),
-    deleteElement: (item_to_delete) => set(state => {
-        state.elements = state.elements.filter(i => i.id !== item_to_delete.id);
+        set((state) => {
+            const item_to_update_index = state.elements.findIndex(e => e.id === new_item.id);
+            if (item_to_update_index === -1) throw new Error(`updateElement not found`);
 
-        useGroupStore.getState().removeElement(item_to_delete);
-        sendMessage(`Элемент "${item_to_delete.name}" успешно удалён`);
-    }),
+            state.elements[item_to_update_index] = new_item;
+            sendMessage(`Элемент "${new_item.name}" успешно обновлён`);
+        })
+    },
+    deleteElement: async (item_to_delete) => {
+        await ElementController.deleteElement(item_to_delete);
+
+        set((state) => {
+            state.elements = state.elements.filter(i => i.id !== item_to_delete.id);
+
+            useGroupStore.getState().removeElement(item_to_delete);
+            sendMessage(`Элемент "${item_to_delete.name}" успешно удалён`);
+        })
+    },
     fetchElements: async () => {
         const elements_db = await ElementController.getElements();
         set({ elements: elements_db });
@@ -46,9 +54,9 @@ export const useElementStore = create<ElementDataStore>()(devtools(immer((set) =
         const elements = state.elements.map(element => {
             if (!element.permissions) return element;
 
-            // if (element.permissions.read_ids === group.id) element.permissions.read_ids = null;
-            // if (element.permissions.write_ids === group.id) element.permissions.write_ids = null;
-            // if (element.permissions.delete_ids === group.id) element.permissions.delete_ids = null;
+            element.permissions.read_ids = element.permissions.read_ids?.filter(g => g !== group.id) || null;
+            element.permissions.write_ids = element.permissions.write_ids?.filter(g => g !== group.id) || null;
+            element.permissions.delete_ids = element.permissions.delete_ids?.filter(g => g !== group.id) || null;
 
             return element;
         })

@@ -5,9 +5,9 @@ import { TGroup } from "../interfaces/TGroup";
 import { TResponse } from "../interfaces/TResponse";
 
 interface IEdgeData {
-    read: boolean,
-    write: boolean,
-    delete: boolean,
+    is_read: boolean,
+    is_write: boolean,
+    is_delete: boolean,
 } 
 
 interface IGroupDBNode extends IBaseNode<IEdgeData> {
@@ -23,9 +23,9 @@ export default function GroupDto(input_data: any) {
         users_ids: i.IN_EDGES?.filter(e => e["@class"] === "MEMBER_OF").map(o => o.out),
         parent_group_id: i.OUT_EDGES?.find(e => e["@class"] === "BELONGS_TO")?.in,
         permissions: {
-            read_ids: i.OUT_EDGES?.filter(e => e["@class"] === "HAS_PERMISSION" && e.read).map(e => e.in),
-            write_ids: i.OUT_EDGES?.filter(e => e["@class"] === "HAS_PERMISSION" && e.write).map(e => e.in),
-            delete_ids: i.OUT_EDGES?.filter(e => e["@class"] === "HAS_PERMISSION" && e.delete).map(e => e.in)
+            read_ids: i.OUT_EDGES?.filter(e => e["@class"] === "HAS_PERMISSION" && e.is_read).map(e => e.in),
+            write_ids: i.OUT_EDGES?.filter(e => e["@class"] === "HAS_PERMISSION" && e.is_write).map(e => e.in),
+            delete_ids: i.OUT_EDGES?.filter(e => e["@class"] === "HAS_PERMISSION" && e.is_delete).map(e => e.in)
         }
     })
  

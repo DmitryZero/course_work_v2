@@ -25,8 +25,8 @@ type TProps = {
 export default function GroupItem({ all_users, all_elements, all_groups, group, updateGroup, deleteGroup }: TProps) {
     const [is_open, setOpenGroup] = useState<boolean>(false);
 
-    const [currrent_group, setCurrentGroup] = useState<TGroup>(group);
-    const [current_permissions, setPermission] = useState<TPermissionElements>(currrent_group.permissions || {
+    const [current_group, setCurrentGroup] = useState<TGroup>(group);
+    const [current_permissions, setPermission] = useState<TPermissionElements>(current_group.permissions || {
         read_ids: null,
         write_ids: null,
         delete_ids: null
@@ -40,11 +40,11 @@ export default function GroupItem({ all_users, all_elements, all_groups, group, 
     }, [group.permissions]);
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setCurrentGroup({ ...currrent_group, [e.target.name]: e.target.value });
+        setCurrentGroup({ ...current_group, [e.target.name]: e.target.value });
     }
 
     function handleParentGroupsChange(group: TGroup | null, field_name?: string) {
-        setCurrentGroup({ ...currrent_group, parent_group_id: group?.id });
+        setCurrentGroup({ ...current_group, parent_group_id: group?.id });
     }
 
     function handleElementsChange(new_value: TElement[] | null, field_name?: string) {
@@ -54,18 +54,22 @@ export default function GroupItem({ all_users, all_elements, all_groups, group, 
     }
 
     const handleUpdate = () => {
-        if (updateGroup) updateGroup({ ...currrent_group, permissions: current_permissions });
+        if (updateGroup) updateGroup({ ...current_group, permissions: current_permissions });
     }
 
     const handleDelete = () => {
-        if (deleteGroup) deleteGroup(currrent_group)
+        if (deleteGroup) deleteGroup(current_group)
+    }
+
+    const handleUsersChange = (users: TUser[] | undefined) => {
+        setCurrentGroup({...current_group, users_ids: users?.map(i => i.id)})
     }
 
     return (
         <>
             <Paper className="p-4 mt-2">
                 <h3 className="font-semibold">
-                    {currrent_group.name}
+                    {current_group.name}
                     <Button
                         sx={{ ml: 2 }}
                         size="small"
@@ -82,12 +86,12 @@ export default function GroupItem({ all_users, all_elements, all_groups, group, 
                     <TextField
                         label="Название группы"
                         name="name"
-                        value={currrent_group.name}
+                        value={current_group.name}
                         fullWidth
                         sx={{ mt: 2 }}
                         onChange={handleChange}
                     />
-                    <UserSelector value_ids={group.users_ids} variants={all_users} />
+                    <UserSelector value_ids={current_group.users_ids} variants={all_users} updateValue={handleUsersChange} />
                     <GroupSelector value_id={group.parent_group_id} variants={all_groups} field_name="Родитель" setValue={handleParentGroupsChange} />
                     <div>
                         <ElementSelector value_ids={current_permissions.read_ids} fieldName="Чтение" variants={all_elements} setCurrentValue={handleElementsChange} />

@@ -19,15 +19,11 @@ function App() {
   const current_user = useUserStore(state => state.currentUser);
 
   const fetchUser = useUserStore(state => state.fetchUsers);
-  const fetchGroups = useGroupStore(state => state.fetchGroups);
-  const fetchElements = useElementStore(state => state.fetchElements);
-  useEffect(() => {    
+  useEffect(() => {
     fetchUser();
-    fetchGroups();
-    fetchElements();
   }, [])
 
-  
+
   const notifications = useNotificationStore(state => state.notifications);
   const removeNotification = useNotificationStore(state => state.removeNotification);
 

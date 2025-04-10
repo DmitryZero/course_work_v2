@@ -41,6 +41,7 @@ export const useGroupStore = create<GroupDataStore>()(devtools(immer((set) => ({
     fetchGroups: async () => {
         const groups_db = await GroupController.getGroups();
         set({ groups: groups_db });
+        useElementStore.getState().fetchElements();
     },
     deleteGroup: async (item_to_delete) => {
         await GroupController.deleteGroup(item_to_delete);

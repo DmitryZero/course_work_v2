@@ -6,6 +6,7 @@ import sendMessage from '../../utility/sendMessage';
 import { TGroup } from '../../interfaces/TGroup';
 import { useGroupStore } from '../Groups/GroupStore';
 import { ElementController } from '../../controllers/elementController';
+import { useUserStore } from '../Users/UserStore';
 
 interface ElementDataStore {
     elements: TElement[],
@@ -48,7 +49,9 @@ export const useElementStore = create<ElementDataStore>()(devtools(immer((set) =
     },
     fetchElements: async () => {
         const elements_db = await ElementController.getElements();
-        set({ elements: elements_db });
+        console.log("fetchElements elements_db", elements_db)
+        set({ elements: elements_db.elements });
+        useUserStore.getState().setItemsToFilter({ write_ids: elements_db.items_to_write, delete_ids: elements_db.items_to_delete });
     },
     removeGroup: (group: TGroup) => set(state => {
         const elements = state.elements.map(element => {

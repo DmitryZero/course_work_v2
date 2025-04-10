@@ -6,6 +6,7 @@ import { Button, Collapse, FormGroup, IconButton, Paper, TextField } from '@mui/
 import GroupSelector from '../Groups/GroupSelector';
 import { TPermissionGroups } from '../../interfaces/TPermissionGroups';
 import MultipleGroupSelector from '../Groups/MultipleGroupSelector';
+import { useUserStore } from '../Users/UserStore';
 
 type TProps = {
     element: TElement,
@@ -17,6 +18,8 @@ type TProps = {
 
 export default function ElementItem({ element, is_readonly, groups, updateItem, deleteElement }: TProps) {
     const [is_open, setOpenElements] = useState<boolean>(false);
+    const items_to_write_ids = useUserStore(state => state.element_to_update);
+    const items_to_delete_ids = useUserStore(state => state.element_to_delete);
 
     const toggleElement = (id: string) => {
         setOpenElements((prev) => !prev);
@@ -68,9 +71,12 @@ export default function ElementItem({ element, is_readonly, groups, updateItem, 
                     >
                         {is_open ? "Скрыть" : "Развернуть"}
                     </Button>
-                    <IconButton aria-label="delete" onClick={handleDelete}>
-                        <DeleteIcon />
-                    </IconButton>
+                    {
+                        (items_to_delete_ids || []).includes(currrent_element.id) &&
+                        <IconButton aria-label="delete" onClick={handleDelete}>
+                            <DeleteIcon />
+                        </IconButton>
+                    }
                 </h3>
 
                 <Collapse in={is_open}>
@@ -107,9 +113,12 @@ export default function ElementItem({ element, is_readonly, groups, updateItem, 
                         <MultipleGroupSelector is_read_only={is_readonly} value_ids={current_permissions.write_ids} variants={groups || []} field_name="Редактирование" setValue={handlePermissionUpdate} />
                         <MultipleGroupSelector is_read_only={is_readonly} value_ids={current_permissions.delete_ids} variants={groups || []} field_name="Удаление" setValue={handlePermissionUpdate} />
                     </FormGroup>
-                    <Button sx={{ mt: 2 }} variant="contained" color="primary" onClick={handleUpdate}>
-                        Обновить
-                    </Button>
+                    {
+                        (items_to_write_ids || []).includes(currrent_element.id) &&
+                        <Button sx={{ mt: 2 }} variant="contained" color="primary" onClick={handleUpdate}>
+                            Обновить
+                        </Button>
+                    }
                 </Collapse>
             </Paper>
         </>

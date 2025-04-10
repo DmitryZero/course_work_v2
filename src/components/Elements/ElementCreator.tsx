@@ -13,7 +13,7 @@ export default function ElementCreator() {
     const createElement = useElementStore(state => state.createElement);
 
     const [element, setElement] = useState<TElement>({
-        id: crypto.randomUUID(),
+        id: "",
         name: "",
         description: ""
     });
@@ -30,7 +30,7 @@ export default function ElementCreator() {
     const handleCreate = () => {
         createElement({ ...element, permissions: current_permissions });
         setElement({
-            id: crypto.randomUUID(),
+            id: "",
             name: "",
             description: "",
         });

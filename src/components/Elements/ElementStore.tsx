@@ -21,9 +21,11 @@ export const useElementStore = create<ElementDataStore>()(devtools(immer((set) =
     elements: [],
     createElement: async (new_item) => {
         const new_item_from_bd = await ElementController.createElement(new_item);
-        new_item.id = new_item_from_bd[0].id;
         set((state) => {
-            state.elements.push(new_item)
+            state.elements.push({
+                ...new_item,
+                id: new_item_from_bd[0].id
+            })
         })
     },
     updateElement: async (new_item) => {

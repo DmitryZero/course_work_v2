@@ -23,6 +23,7 @@ interface IEdgeData {
 export const GroupController = {
     async getGroups() {
         const groups_db_data = await dbController.sendSQLRequest("SELECT *, (SELECT expand(inE()) FROM $current) as IN_EDGES, (SELECT expand(outE()) FROM $current) as OUT_EDGES FROM Group");
+        console.log("this.getGroups");
         return GroupDto(groups_db_data);
     },
     async createGroup(group: TGroup) {

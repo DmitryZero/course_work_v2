@@ -31,8 +31,8 @@ interface IElementsRights {
 }
 
 export const ElementController = {
-    async getElements() {
-        if (useUserStore.getState().currentUser?.is_admin) {
+    async getElements(is_admin?: boolean) {
+        if (is_admin || useUserStore.getState().currentUser?.is_admin) {
             const elements_db_data = await dbController.sendSQLRequest(`SELECT *, (SELECT expand(inE()) FROM $current) as IN_EDGES, (SELECT expand(outE()) FROM $current) as OUT_EDGES FROM Element`);
             const elements = Elementdto(elements_db_data)
             return {

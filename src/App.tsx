@@ -14,8 +14,11 @@ import GroupList from './components/Groups/GroupList';
 import { Alert, Grid, Snackbar } from '@mui/material';
 import { useNotificationStore } from './components/General/NotificationStore';
 
+type TProps = {
+  is_admin?: boolean
+}
 
-function App() {
+function App({ is_admin }: TProps) {
   const current_user = useUserStore(state => state.currentUser);
 
   const fetchUser = useUserStore(state => state.fetchUsers);
@@ -40,7 +43,7 @@ function App() {
         </Grid>
         <Grid size={6}>
           {
-            current_user?.is_admin && <>
+            (is_admin || current_user?.is_admin) && <>
               <h2 className="text-xl font-bold">Управление группами</h2>
               <GroupCreator />
               <GroupList />

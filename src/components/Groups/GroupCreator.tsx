@@ -43,7 +43,7 @@ export default function GroupCreator() {
 
     return (
         <>
-            <Paper className="p-4">
+            <Paper className="p-4" data-testid="group-creator-form">
                 <h2 className="font-semibold">Создать новую группу</h2>
                 <TextField
                     label="Название группы"

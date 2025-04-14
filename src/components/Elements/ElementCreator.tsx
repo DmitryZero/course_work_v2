@@ -48,7 +48,7 @@ export default function ElementCreator() {
     }
 
     return (
-        <Paper className="p-4">
+        <Paper className="p-4" data-testid="element-creator-form">
             <h2 className="font-semibold">Создать новый элемент</h2>
             <TextField
                 label="Название элемента"

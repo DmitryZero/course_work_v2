@@ -1,0 +1,17 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 20        # Продолжительность теста: 60 секунд
+      arrivalRate: 20     # 10 новых "пользователей" в секунду
+  engines:
+    playwright:
+      launchOptions:
+        headless: true
+
+scenarios:
+  - name: "Load test main page"
+    flow:
+      - navigate:
+          url: "/"
+      - wait:
+          time: 3
